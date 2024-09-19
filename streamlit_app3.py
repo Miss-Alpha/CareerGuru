@@ -267,10 +267,14 @@ def create_main_frame():
         st.markdown('\n')
         st.markdown('\n')
         st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
         st.markdown('# AI-Powered features from the future.')
         st.markdown('\n')
         st.markdown('\n')
-        st.markdown('##### Hirevision is utilized by numerous businesses, institutions, and recruiters to significantly enhance their screening and recruitment procedures.')
+        st.markdown('##### HireWiser is utilized by numerous businesses, institutions, and recruiters to significantly enhance their screening and recruitment procedures.')
         st.markdown('\n')
         st.markdown('\n')
         st.markdown('\n')
@@ -278,13 +282,29 @@ def create_main_frame():
 
         #font-family: 'Poppins', sans-serif;
 
+        st.markdown('\n')
+        st.markdown('\n')
+
+        col11, col12= st.columns([1, 1])
+        with col11:
+            name = st.text_input('Name', on_change=set_state, args=[1])
+        
+        with col12:
+            job_title2 = st.text_input('Job Title')
+        
+        job_desc = st.text_area('Job Description', height = 120)
+
+
+        # with col12:
+        #     cv_resume = st.file_uploader('test')
+
         # to put the button in the middle
-        col1, col2, col3 = st.columns([2, 1, 2])
-        with col1:
+        col21, col22, col23 = st.columns([2, 1, 2])
+        with col21:
             st.markdown(' ')
-        with col2:
+        with col22:
             st.button('Get Started', on_click=set_state, args=[1])
-        with col3:
+        with col23:
             st.markdown(' ')
 
 
