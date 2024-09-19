@@ -38,6 +38,8 @@ from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
 from datetime import datetime
+from streamlit_extras.stylable_container import stylable_container
+import texts
 
 load_dotenv()
 
@@ -120,30 +122,10 @@ def summarise_resume(uploaded_cv):
 def generate_questions(interview_type, question_count, input_contents, provide_answers, resume_summary):
     if provide_answers:
     #    if len(resume_summary)>0:
-            prompt_text = f"""
-            You are an experienced interview assistant helping managers prepare tailored interview questions. 
-            The manager will provide you with a job title and a description, and you will create a list of relevant questions to guide the interview process.
-            
-            Please generate a set of {question_count} high-quality questions for a {interview_type} interview with their respective answers.
-            
-            The position and desription being interviewed for is: {input_contents} and the candidate summary is: {resume_summary}.
-
-            Ensure the questions are thoughtful, focus on key competencies for the role, and maintain a professional tone throughout.
-            Do not start the responses with sure or certainly.
-            """
+            prompt_text = f"{texts.prompt_text_with_answers}"
 
     else:
-        prompt_text = f"""
-        You are an experienced interview assistant helping managers prepare tailored interview questions. 
-        The manager will provide you with a job title and a description, and you will create a list of relevant questions to guide the interview process.
-        
-        Please generate a set of {question_count} high-quality questions for a {interview_type} interview. 
-        
-        The position and desription being interviewed for is: {input_contents} and the candidate summary is: {resume_summary}.
-
-        Ensure the questions are thoughtful, focus on key competencies for the role, and maintain a professional tone throughout.
-        Do not start the responses with sure or certainly.
-        """
+        prompt_text = f"{texts.prompt_text_without_answers}"
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -263,52 +245,78 @@ def create_main_frame():
         # # Display the video
         # st.video(video_bytes)
 
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
+        st.markdown('\n')
 
+
+        col11, col12, col13 = st.columns([1, 1, 1])
+        with col11: 
+            st.markdown('')
+        with col12: 
+            st.image('img/logo.gif') 
+        with col13: 
+            st.markdown(' ')
+
+        # col21, col22, col23 = st.columns([1.5, 1, 1])
+        # with col21: 
+        #     st.markdown(' ')
+        # with col22: 
+        #     st.markdown("<p style='color:#2ec4b6; font-size:20px; font-family:'Pacifito', cursive; text-align: center;' > <b> HireWiser </b> </p>", unsafe_allow_html=True)
+        # with col23: 
+        #     st.markdown(' ')
+        
+
+        st.markdown("<p style='color:#0a1128; text-align: center; font-size:50px; font-family:'Pacifito', cursive;' > <b> AI-Powered features from the future. </b> </p>", unsafe_allow_html=True)
+        #st.markdown('# AI-Powered features from the future.')
         st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('# AI-Powered features from the future.')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('##### HireWiser is utilized by numerous businesses, institutions, and recruiters to significantly enhance their screening and recruitment procedures.')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
+        
 
         #font-family: 'Poppins', sans-serif;
 
-        st.markdown('\n')
-        st.markdown('\n')
-
-        col11, col12= st.columns([1, 1])
-        with col11:
-            name = st.text_input('Name', on_change=set_state, args=[1])
+        col31, col32= st.columns([1, 1])
+        with col31:
+            name = st.text_input('Candidate\'s Name', on_change=set_state, args=[1])
         
-        with col12:
-            job_title2 = st.text_input('Job Title')
+        with col32:
+            job_title2 = st.text_input('Job Title', 'Data Scientist')
         
-        job_desc = st.text_area('Job Description', height = 120)
+        job_desc = st.text_area('Job Description' , texts.job_description , height = 210)
 
 
         # with col12:
         #     cv_resume = st.file_uploader('test')
 
         # to put the button in the middle
-        col21, col22, col23 = st.columns([2, 1, 2])
-        with col21:
+        col41, col42, col43 = st.columns([2, 1, 2])
+        with col41:
             st.markdown(' ')
-        with col22:
-            st.button('Get Started', on_click=set_state, args=[1])
-        with col23:
+        with col42:
+            with stylable_container(
+                "green",
+                css_styles="""
+                button {
+                    background-color: #FFFFFF;
+                    color: #ff5400;
+                }
+                button:hover {
+                    background-color: #ff5400;
+                    color: #ff5400;
+                }
+                """,
+            ):
+                button_clicked = st.button(f"Get Started", key="button", on_click=set_state, args=[1], use_container_width=True)
+
+            # st.button('Get Started', on_click=set_state, args=[1])
+        with col43:
             st.markdown(' ')
 
 
-    if st.session_state.stage >= 1:
+    if st.session_state.stage == 1:
         with st.sidebar:
             st.sidebar.markdown('<p style="color:#012a4a; font-size:70px; font-family:Helvetica" > <b> HireWise </b> </p>', unsafe_allow_html=True)
             #st.subheader("Job Information")
