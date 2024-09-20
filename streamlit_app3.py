@@ -11,14 +11,19 @@
 # TODO: 11. Give warning with st components like st.warning
 # TODO: 12. Remove certainely from the start of the answers ✅ 17/9
 # TODO: 13. Add the download button ✅ 17/9
-# TODO: 14. Generate a proper pdf with different headers and sections
+# TODO: 14. Generate a proper pdf with different headers and sections ✅ 18/9
 # TODO: 15. Add date and time in generated pdf's name ✅ 17/9
 # TODO: 16. Add candidate's name in the pdf file 
-# TODO: 17. Add line breaks if possible 
+# TODO: 17. Add line breaks in the pdf if possible ✅ 18/9
 # TODO: 18. Hide resume summary section in the pdf file if it is not provided
-# TODO: 19. Add different steps for the task (stage 1, stage 2, ...)
+# TODO: 19. Add different steps for the task (stage 1, stage 2, ...) ✅ 19/9
 # TODO: 20. Give a similarity score based the job description and uploaded resume
 # TODO: 21. Add the user name or personal info at the top of the pdf with a different text color - maybe a highlight
+# TODO: 22. Add a progress bar ✅ 20/9, for sessions 0, 1
+# TODO: 23. Handle when the resume is not in proper format
+# TODO: 24. Add accept resume summary or regenerate button ✅ 20/9
+# TODO: 25. Move provide anwers checkbox in the stage 2
+# TODO: 26. Add st.status to show the stages
 
 
 
@@ -27,6 +32,7 @@
 import re
 import streamlit as st
 import tempfile
+import time
 #import markdown2
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -75,9 +81,6 @@ client = OpenAI()
 # function for chainging the states
 def set_state(i):
     st.session_state.stage = i
-
-if 'stage' not in st.session_state:
-    st.session_state.stage = 0
 
 
 # def ChangeTheme():
@@ -228,14 +231,36 @@ def create_pdf(pdf_filename, sections):
     doc.build(content)
 
 
-
 def create_main_frame():
     
     if 'stage' not in st.session_state:
         st.session_state.stage = 0
 
+    # Initialize the progress bar
+    progress_bar = st.progress(0)
 
+    st.markdown(
+    """
+    <style>
+        .stProgress > div > div > div > div {
+            background-color: #ff5400;
+        }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+    
+ 
     if st.session_state.stage == 0:
+        for i in range(15):
+            # Update the progress bar with each iteration.
+            progress_bar.progress(i + 1)
+            time.sleep(0.05)
+
+        # Design move app further up and remove top padding
+        st.markdown('''<style>.css-1egvi7u {margin-top: -600rem;}</style>''',
+        unsafe_allow_html=True)
+
         # Open the video file
         # video_file = open('get_started.mp4', 'rb')
 
@@ -244,14 +269,6 @@ def create_main_frame():
 
         # # Display the video
         # st.video(video_bytes)
-
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
-        st.markdown('\n')
 
 
         col11, col12, col13 = st.columns([1, 1, 1])
@@ -276,20 +293,6 @@ def create_main_frame():
         st.markdown('\n')
         
 
-        #font-family: 'Poppins', sans-serif;
-
-        col31, col32= st.columns([1, 1])
-        with col31:
-            name = st.text_input('Candidate\'s Name', on_change=set_state, args=[1])
-        
-        with col32:
-            job_title2 = st.text_input('Job Title', 'Data Scientist')
-        
-        job_desc = st.text_area('Job Description' , texts.job_description , height = 210)
-
-
-        # with col12:
-        #     cv_resume = st.file_uploader('test')
 
         # to put the button in the middle
         col41, col42, col43 = st.columns([2, 1, 2])
@@ -309,41 +312,61 @@ def create_main_frame():
                 }
                 """,
             ):
-                button_clicked = st.button(f"Get Started", key="button", on_click=set_state, args=[1], use_container_width=True)
+                st.button(f"Get Started", key="button", on_click=set_state, args=[1], use_container_width=True)
 
             # st.button('Get Started', on_click=set_state, args=[1])
         with col43:
-            st.markdown(' ')
+            st.markdown(' ') 
+
+        #font-family: 'Poppins', sans-serif;
+
+        col31, col32= st.columns([1, 1])
+        with col31:
+            name = st.text_input('Candidate\'s Name', on_change=set_state, args=[1])
+        
+        with col32:
+            job_title2 = st.text_input('Job Title', 'Data Scientist')
+        
+        job_desc = st.text_area('Job Description' , texts.job_description , height = 210)
+
+
+        # with col12:
+        #     cv_resume = st.file_uploader('test')
+
 
 
     if st.session_state.stage == 1:
-        with st.sidebar:
-            st.sidebar.markdown('<p style="color:#012a4a; font-size:70px; font-family:Helvetica" > <b> HireWise </b> </p>', unsafe_allow_html=True)
+        for i in range(35):
+            # Update the progress bar with each iteration.
+            progress_bar.progress(i + 1)
+            #time.sleep(0.1)
+        #with st.sidebar:
+            # st.sidebar.markdown('<p style="color:#012a4a; font-size:70px; font-family:Helvetica" > <b> HireWise </b> </p>', unsafe_allow_html=True)
             #st.subheader("Job Information")
 
-            st.html(
-            """
-            <style>
-            [data-testid="stSidebarContent"] {
-                color: white;
-                width:380px;
-            }
-            [data-testid="stSidebar"] {
-                color: white;
-                width:400px;
-            }
-            </style>
-            """
-            )
+            # st.html(
+            # """
+            # <style>
+            # [data-testid="stSidebarContent"] {
+            #     color: white;
+            #     width:380px;
+            # }
+            # [data-testid="stSidebar"] {
+            #     color: white;
+            #     width:400px;
+            # }
+            # </style>
+            # """
+            # )
 
-            # Job Title Text Box
-            job_title = st.text_input('Enter the role the candidates are applying for:', 'Data Scientist')
+            # # Job Title Text Box
+            # job_title = st.text_input('Enter the role the candidates are applying for:', 'Data Scientist')
 
-            # Job Description Text Box
-            job_description = st.text_area("Enter the description of the role:", 'We are seeking a skilled and motivated Data Scientist to join our team. As a mid-level Data Scientist, you will work on developing and implementing data models, performing data analysis, and contributing to data-driven decision-making. You’ll collaborate with cross-functional teams to turn raw data into valuable insights that help drive our business forward.', height=210)
+            # # Job Description Text Box
+            # job_description = st.text_area("Enter the description of the role:", 'We are seeking a skilled and motivated Data Scientist to join our team. As a mid-level Data Scientist, you will work on developing and implementing data models, performing data analysis, and contributing to data-driven decision-making. You’ll collaborate with cross-functional teams to turn raw data into valuable insights that help drive our business forward.', height=210)
 
-            # Upload Resume
-            uploaded_file = st.file_uploader("Upload Resume", type="pdf")
+            # # Upload Resume
+            # uploaded_file = st.file_uploader("Upload Resume", type="pdf")
                 
 
 
@@ -352,7 +375,8 @@ def create_main_frame():
         #st.markdown("No more stress—just easy, effective interview prep!")
         #st.write('\n')  # add spacing
 
-        st.subheader('\nWhat role are you hiring for?\n')
+        st.subheader('\nNow that you are here...\n')
+        st.markdown('Specify the type of the interview, and the number of questions then upload candidate\'s resume.')
         
         # with st.expander("Role Description - Expand for Customization", expanded=False):
         #     job_title = st.text_input('Enter the role the candidates are applying for', 'Data Scientist')
@@ -375,16 +399,35 @@ def create_main_frame():
             #question_count = str(st.slider('Question Count', 2, 10))
             question_count = st.selectbox('Question Count', ('2', '3', '4', '5', '6', '7', '8', '9', '10'), index=0)
 
-        resume_summary = summarise_resume(uploaded_file)
-        st.text_area("Resume Summary", resume_summary, height=200)
+        with st.sidebar:
+        
+            uploaded_file = st.file_uploader("Upload Resume", type="pdf")
 
-        # with col3:
-        provide_answers = st.checkbox('Provide Sample Answers')
+        if uploaded_file:
+            with st.expander('Resume Summary', expanded=True):
+                with st.spinner():
+                    resume_summary = summarise_resume(uploaded_file)
+                
+                    
+                    col3, col4 = st.columns([1, 1])
+                    with col3:
+                        if st.button('Regenerate Summary', use_container_width=True):
+                            resume_summary = summarise_resume(uploaded_file) # this part is giving me errors that it cannot upload an empty file
+                            st.text_area("Resume Summary", resume_summary, height=200)
+                            #st.markdown(uploaded_file)
+                    with col4:
+                        if st.button('Submit', use_container_width=True):
+                            submitted_resume_summary = resume_summary
+                    
+                    st.text_area("", resume_summary, height=200)
+
+
+        # provide_answers = st.checkbox('Provide Sample Answers')
 
         # with col4:
             #st.write("\n")  # add spacing
             #st.write("\n")  # add spacing
-        if st.button('Generate Questions'):
+        if st.button('Generate Questions', use_container_width=True):
             with st.spinner():
 
                 input_contents = []  # let the user input all the data
