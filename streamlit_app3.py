@@ -22,18 +22,16 @@
 # TODO: 22. Add a progress bar ✅ 20/9, for sessions 0, 1
 # TODO: 23. Handle when the resume is not in proper format
 # TODO: 24. Add accept resume summary or regenerate button ✅ 20/9
-# TODO: 25. Move provide anwers checkbox in the stage 2
+# TODO: 25. Move provide anwers checkbox in the stage 2 ✅ 23/9
 # TODO: 26. Add st.status to show the stages
+# TODO: 27. Add a back button so the user can go to the previous stage
 
 
 
-#import os
-#import openai
 import re
 import streamlit as st
 import tempfile
 import time
-#import markdown2
 from openai import OpenAI
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
@@ -238,6 +236,8 @@ def create_main_frame():
 
     # Initialize the progress bar
     progress_bar = st.progress(0)
+    
+  
 
     st.markdown(
     """
@@ -255,50 +255,60 @@ def create_main_frame():
         for i in range(15):
             # Update the progress bar with each iteration.
             progress_bar.progress(i + 1)
-            time.sleep(0.05)
+            time.sleep(0.02)
 
         # Design move app further up and remove top padding
         st.markdown('''<style>.css-1egvi7u {margin-top: -600rem;}</style>''',
         unsafe_allow_html=True)
 
-        # Open the video file
-        # video_file = open('get_started.mp4', 'rb')
 
-        # # Read the video file
-        # video_bytes = video_file.read()
+        # Initialze Session Variables
+        # if 'candidate_name' not in st.session_state:
+        #     st.session_state.candidate_name = ' '
 
-        # # Display the video
-        # st.video(video_bytes)
+        # if 'job_title' not in st.session_state:
+        #     st.session_state.job_title = ' '
+        
+        # if 'job_description' not in st.session_state:
+        #     st.session_state.job_description = ' '
+
+        # if 'resume_summary' not in st.session_state:
+        #     st.session_state.resume_summary = ' '
+
+        # if 'interview_questions' not in st.session_state:
+        #     st.session_state.interview_questions = ' '
 
 
-        col11, col12, col13 = st.columns([1, 1, 1])
-        with col11: 
+        col011, col012, col013 = st.columns([1, 1, 1])
+        with col011: 
             st.markdown('')
-        with col12: 
+        with col012: 
             st.image('img/logo.gif') 
-        with col13: 
+        with col013: 
             st.markdown(' ')
 
-        # col21, col22, col23 = st.columns([1.5, 1, 1])
-        # with col21: 
-        #     st.markdown(' ')
-        # with col22: 
-        #     st.markdown("<p style='color:#2ec4b6; font-size:20px; font-family:'Pacifito', cursive; text-align: center;' > <b> HireWiser </b> </p>", unsafe_allow_html=True)
-        # with col23: 
-        #     st.markdown(' ')
-        
 
         st.markdown("<p style='color:#0a1128; text-align: center; font-size:50px; font-family:'Pacifito', cursive;' > <b> AI-Powered features from the future. </b> </p>", unsafe_allow_html=True)
         #st.markdown('# AI-Powered features from the future.')
         st.markdown('\n')
+
+        with st.sidebar:
+            candidate_name = st.text_input('Candidate\'s Name', key='candidate name')
+            st.session_state['candidate_name'] = candidate_name
+
+            job_title2 = st.text_input('Job Title', 'Data Scientist')
+            st.session_state['job_title'] = job_title2
+        
+            job_desc = st.text_area('Job Description' , texts.job_description , height = 380)
+            st.session_state['job_description'] = job_desc
         
 
 
         # to put the button in the middle
-        col41, col42, col43 = st.columns([2, 1, 2])
-        with col41:
+        col021, col022, col023 = st.columns([2, 1, 2])
+        with col021:
             st.markdown(' ')
-        with col42:
+        with col022:
             with stylable_container(
                 "green",
                 css_styles="""
@@ -315,23 +325,8 @@ def create_main_frame():
                 st.button(f"Get Started", key="button", on_click=set_state, args=[1], use_container_width=True)
 
             # st.button('Get Started', on_click=set_state, args=[1])
-        with col43:
+        with col023:
             st.markdown(' ') 
-
-        #font-family: 'Poppins', sans-serif;
-
-        col31, col32= st.columns([1, 1])
-        with col31:
-            name = st.text_input('Candidate\'s Name', on_change=set_state, args=[1])
-        
-        with col32:
-            job_title2 = st.text_input('Job Title', 'Data Scientist')
-        
-        job_desc = st.text_area('Job Description' , texts.job_description , height = 210)
-
-
-        # with col12:
-        #     cv_resume = st.file_uploader('test')
 
 
 
@@ -369,24 +364,15 @@ def create_main_frame():
             # uploaded_file = st.file_uploader("Upload Resume", type="pdf")
                 
 
+        st.markdown(f"Helloow {st.session_state['candidate_name']}")
 
-        #st.image('img/TailorQ_banner.png')  # TITLE and Creator information
-        #st.markdown("Prepare for interviews like a pro! Our app instantly creates tailored interview questions based on the job title and description, helping you focus on key skills and make smarter hiring decisions.")
-        #st.markdown("No more stress—just easy, effective interview prep!")
-        #st.write('\n')  # add spacing
 
-        st.subheader('\nNow that you are here...\n')
-        st.markdown('Specify the type of the interview, and the number of questions then upload candidate\'s resume.')
-        
-        # with st.expander("Role Description - Expand for Customization", expanded=False):
-        #     job_title = st.text_input('Enter the role the candidates are applying for', 'Data Scientist')
-        #     job_desc = st.text_area("Enter the description of the role", 'We are seeking a skilled and motivated Data Scientist to join our team. As a mid-level Data Scientist, you will work on developing and implementing data models, performing data analysis, and contributing to data-driven decision-making. You’ll collaborate with cross-functional teams to turn raw data into valuable insights that help drive our business forward.', height=20)
+        st.header('Step 1: Upload the Resume...')
 
-        #     uploaded_cv = st.file_uploader("Upload the candidate's CV", type=['pdf', 'docx'])
 
-        interview_questions = ""
+        st.markdown('Upload candidate\'s resume, regeneate the summary if you\'re not happy with it and then press sumbit.')
+
         resume_summary = ""
-
 
         col1, col2= st.columns([1, 1])
 
@@ -401,40 +387,103 @@ def create_main_frame():
 
         with st.sidebar:
         
-            uploaded_file = st.file_uploader("Upload Resume", type="pdf")
+            uploaded_file = st.file_uploader("Upload Resume", type=['pdf', 'docx'])
 
         if uploaded_file:
             with st.expander('Resume Summary', expanded=True):
                 with st.spinner():
                     resume_summary = summarise_resume(uploaded_file)
-                
                     
-                    col3, col4 = st.columns([1, 1])
-                    with col3:
+                    
+                    col111, col112 = st.columns([1, 1])
+                    with col111:
                         if st.button('Regenerate Summary', use_container_width=True):
                             resume_summary = summarise_resume(uploaded_file) # this part is giving me errors that it cannot upload an empty file
                             st.text_area("Resume Summary", resume_summary, height=200)
                             #st.markdown(uploaded_file)
-                    with col4:
-                        if st.button('Submit', use_container_width=True):
-                            submitted_resume_summary = resume_summary
+                    with col112:
+                        st.button('Submit', key="button", on_click=set_state, args=[2], use_container_width=True)
+
                     
-                    st.text_area("", resume_summary, height=200)
+                    st.text_area("Resume Summary", resume_summary, height=200)
+                    st.session_state['resume_summary'] = resume_summary
 
 
-        # provide_answers = st.checkbox('Provide Sample Answers')
+    if st.session_state.stage == 2:
+        
+        st.sidebar.write(" ")
 
-        # with col4:
-            #st.write("\n")  # add spacing
-            #st.write("\n")  # add spacing
+        for i in range(55):
+            # Update the progress bar with each iteration.
+            progress_bar.progress(i + 1)
+
+        
+
+        st.header("Step 2 - Let's Review")
+        st.markdown("Review the information below and click 'Generate Querstions'")
+
+        col221, col222= st.columns([1, 1])
+
+        with col221:
+            st.button('Generate Questions', key='submit_button', on_click=set_state, args=[3], use_container_width=True)
+        with col222:
+            st.button('Start Over', key="back_button", on_click=set_state, args=[0], use_container_width=True)
+
+
+        st.subheader("General Information")
+
+        col211, col212= st.columns([1, 1])
+        with col211:
+            st.text_input('Candidate Name', value = st.session_state['candidate_name'])
+        with col212:
+            st.text_input('Job Title', value = st.session_state['job_title'])
+        st.text_area('Job Description', value = st.session_state['job_description'])
+
+        # Draw a horizontal line
+        st.divider()
+
+        st.subheader("Resume")
+        st.text_area('Resume Summary', value = st.session_state['resume_summary'])
+        
+
+
+    if st.session_state.stage == 3:
+
+        for i in range(90):
+            # Update the progress bar with each iteration.
+            progress_bar.progress(i + 1)
+
+
+        interview_questions = ""
+
+        vertical_alignment = st.selectbox(
+            "Vertical alignment", ["top", "center", "bottom"], index=2
+        )
+
+        col311, col312, col313 = st.columns([1, 1, 0.5], vertical_alignment=vertical_alignment)
+
+        with col311: 
+            interview_type = st.selectbox('Interview Type',
+                                        ('General', 'Technical'),
+                                        index=0)
+        with col312:
+            #question_count = st.text_input('Question Count', '2')
+            #question_count = str(st.slider('Question Count', 2, 10))
+            question_count = st.selectbox('Question Count', ('2', '3', '4', '5', '6', '7', '8', '9', '10'), index=0)
+
+        with col313:
+            provide_answers = st.checkbox('Provide Sample Answers')
+
+        st.markdown(f'Job title: {st.session_state.job_title}')
+
         if st.button('Generate Questions', use_container_width=True):
             with st.spinner():
 
                 input_contents = []  # let the user input all the data
-                if (job_title != ""):
-                    input_contents.append(str(job_title))
-                if (job_description != ""):
-                    input_contents.append(str(job_description))
+                if (st.session_state.job_title != ""):
+                    input_contents.append(str(st.session_state.job_title))
+                if (st.session_state.job_description != ""):
+                    input_contents.append(str(st.session_state.job_description))
                 if (len(input_contents) == 0):  # remind user to provide data
                     st.write('Please fill in some contents for your message!')
 
@@ -445,23 +494,23 @@ def create_main_frame():
                                                                 question_count, 
                                                                 input_contents, 
                                                                 provide_answers,
-                                                                resume_summary)
+                                                                st.session_state.resume_summary)
                 
                     
         if interview_questions != "":
             with st.expander("Interview Questions", expanded=True):
                 st.markdown(interview_questions)
 
-                pdf_sections = [
-                        ("Resume Summary", resume_summary),
-                        ("List of Questions", interview_questions)
-                    ]
+                # pdf_sections = [
+                #         ("Resume Summary",  st.session_state.resume_summary),
+                #         ("List of Questions", interview_questions)
+                #     ]
                 
-                filename = generate_filename('HireWise')
-                create_pdf(filename, pdf_sections)
+                # filename = generate_filename('HireWise')
+                # create_pdf(filename, pdf_sections)
 
-                with open(filename, 'rb') as download_file:
-                    st.download_button('Download', data=download_file, file_name=filename)
+                # with open(filename, 'rb') as download_file:
+                #     st.download_button('Download', data=download_file, file_name=filename)
 
 
 if __name__ == '__main__': 
