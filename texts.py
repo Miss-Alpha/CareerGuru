@@ -8,8 +8,6 @@ job_description =  """- Advanced degree in Computer Science, Statistics, Mathema
 - Strong communication and teamwork abilities."""
 
 
-
-
 def prompt_with_answers(interview_type, question_count, input_contents, resume_summary):
     return f"""
     You are an experienced interview assistant helping managers prepare tailored interview questions. 
@@ -35,3 +33,13 @@ def prompt_without_answers(interview_type, question_count, input_contents, resum
     Ensure the questions are thoughtful, focus on key competencies for the role, and maintain a professional tone throughout.
     Do not start the responses with sure or certainly.
     """
+
+tips_text = f"""<b>During the interview:</b><br />
+- Dress professionally: Make a good first impression with appropriate attire. <br />
+- Be punctual: Arrive on time or a few minutes early. <br />
+- Maintain good eye contact: Show engagement and confidence. <br />
+- Speak clearly and confidently: Project a positive and enthusiastic demeanor. <br />
+- Listen attentively: Pay close attention to the interviewer's questions and respond thoughtfully. <br />
+- Highlight your skills and experiences: Relate your qualifications to the job requirements. <br />
+- Ask questions: Show your interest by asking questions about the role, company, and team. <br />
+"""
