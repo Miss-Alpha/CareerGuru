@@ -25,6 +25,7 @@
 # TODO: 25. Move provide anwers checkbox in the stage 2 ✅ 23/9
 # TODO: 26. Add st.status to show the stages
 # TODO: 27. Add a back button so the user can go to the previous stage
+# TODO: 28. Make the progress bar seem static when session is restarted ✅ 24/9
 
 
 
@@ -119,14 +120,16 @@ def summarise_resume(uploaded_cv):
         return ""
 
 
-#@st.cache_resource
 def generate_questions(interview_type, question_count, input_contents, provide_answers, resume_summary):
+    # test = f'{interview_type},{question_count}, {input_contents}, {provide_answers}, {resume_summary}'
+    # return test
     if provide_answers:
     #    if len(resume_summary)>0:
-            prompt_text = f"{texts.prompt_text_with_answers}"
+            prompt_text = texts.prompt_with_answers(interview_type, question_count, input_contents, resume_summary)
 
     else:
-        prompt_text = f"{texts.prompt_text_without_answers}"
+        #prompt_text = f"{texts.prompt_text_without_answers}"
+        prompt_text = texts.prompt_without_answers(interview_type, question_count, input_contents, resume_summary)
 
     response = client.chat.completions.create(
         model="gpt-4o-mini",
@@ -136,19 +139,10 @@ def generate_questions(interview_type, question_count, input_contents, provide_a
         ]
         )
     message = response.choices[0].message.content
-    # for word in response.split():
-    #     yield word + " "
-    #     time.sleep(0.05)
     return message
-    #return 'successfully done'
 
-# def stream_response(response): # this was never used
-#     for chunk in response.split():
-#         yield chunk + " "
-#         time.sleep(0.05)
 
 # Create PDF Functions
-
 def create_header_style(level):
     """Create and return a header style based on the level."""
     styles = getSampleStyleSheet()
@@ -200,6 +194,7 @@ def format_text(text):
     
     return text
 
+
 def add_section(content, header_text, paragraph_text, header_style, paragraph_style):
     """Add a section with a header and paragraph to the content list."""
     header = Paragraph(header_text, header_style)
@@ -238,7 +233,6 @@ def create_main_frame():
     progress_bar = st.progress(0)
     
   
-
     st.markdown(
     """
     <style>
@@ -249,13 +243,14 @@ def create_main_frame():
     """,
     unsafe_allow_html=True,
 )
-    
- 
+     
     if st.session_state.stage == 0:
-        for i in range(15):
-            # Update the progress bar with each iteration.
-            progress_bar.progress(i + 1)
-            time.sleep(0.02)
+        progress_bar.progress((st.session_state.stage+1)*15)
+        # for i in range(15):
+        #     # Update the progress bar with each iteration.
+        #     progress_bar.progress(i + 1)
+        #     time.sleep(0.02)
+        st.session_state.progress_value = 10
 
         # Design move app further up and remove top padding
         st.markdown('''<style>.css-1egvi7u {margin-top: -600rem;}</style>''',
@@ -329,11 +324,11 @@ def create_main_frame():
             st.markdown(' ') 
 
 
-
     if st.session_state.stage == 1:
-        for i in range(35):
-            # Update the progress bar with each iteration.
-            progress_bar.progress(i + 1)
+        progress_bar.progress((st.session_state.stage+1)*15)
+        # for i in range(35):
+        #     # Update the progress bar with each iteration.
+        #     progress_bar.progress(i + 1)
             #time.sleep(0.1)
         #with st.sidebar:
             # st.sidebar.markdown('<p style="color:#012a4a; font-size:70px; font-family:Helvetica" > <b> HireWise </b> </p>', unsafe_allow_html=True)
@@ -397,12 +392,13 @@ def create_main_frame():
                     
                     col111, col112 = st.columns([1, 1])
                     with col111:
+                        st.button('Submit', key="button", on_click=set_state, args=[2], use_container_width=True)
+                    with col112:
                         if st.button('Regenerate Summary', use_container_width=True):
                             resume_summary = summarise_resume(uploaded_file) # this part is giving me errors that it cannot upload an empty file
                             st.text_area("Resume Summary", resume_summary, height=200)
                             #st.markdown(uploaded_file)
-                    with col112:
-                        st.button('Submit', key="button", on_click=set_state, args=[2], use_container_width=True)
+                    
 
                     
                     st.text_area("Resume Summary", resume_summary, height=200)
@@ -413,9 +409,11 @@ def create_main_frame():
         
         st.sidebar.write(" ")
 
-        for i in range(55):
-            # Update the progress bar with each iteration.
-            progress_bar.progress(i + 1)
+        # for i in range(55):
+        #     # Update the progress bar with each iteration.
+        #     progress_bar.progress(i + 1)
+
+        progress_bar.progress((st.session_state.stage+1)*15)
 
         
 
@@ -427,7 +425,7 @@ def create_main_frame():
         with col221:
             st.button('Generate Questions', key='submit_button', on_click=set_state, args=[3], use_container_width=True)
         with col222:
-            st.button('Start Over', key="back_button", on_click=set_state, args=[0], use_container_width=True)
+            st.button('Submit Changes', key="back_button", on_click=set_state, args=[0], use_container_width=True)
 
 
         st.subheader("General Information")
@@ -446,71 +444,72 @@ def create_main_frame():
         st.text_area('Resume Summary', value = st.session_state['resume_summary'])
         
 
-
     if st.session_state.stage == 3:
 
-        for i in range(90):
-            # Update the progress bar with each iteration.
-            progress_bar.progress(i + 1)
+        # for i in range(90):
+        #     # Update the progress bar with each iteration.
+        #     progress_bar.progress(i + 1)
 
+        progress_bar.progress((st.session_state.stage+1)*15)
 
         interview_questions = ""
+        st.session_state.interview_questions = ' '
 
-        vertical_alignment = st.selectbox(
-            "Vertical alignment", ["top", "center", "bottom"], index=2
-        )
 
-        col311, col312, col313 = st.columns([1, 1, 0.5], vertical_alignment=vertical_alignment)
+        col311, col312 = st.columns([1, 1])
 
         with col311: 
             interview_type = st.selectbox('Interview Type',
                                         ('General', 'Technical'),
                                         index=0)
         with col312:
-            #question_count = st.text_input('Question Count', '2')
-            #question_count = str(st.slider('Question Count', 2, 10))
             question_count = st.selectbox('Question Count', ('2', '3', '4', '5', '6', '7', '8', '9', '10'), index=0)
 
-        with col313:
-            provide_answers = st.checkbox('Provide Sample Answers')
+        provide_answers = st.checkbox('Provide Sample Answers')
 
-        st.markdown(f'Job title: {st.session_state.job_title}')
+        # st.markdown(f'Job title: {st.session_state.job_title}')
+        # st.markdown(f'Job description: {st.session_state.job_description}')
 
         if st.button('Generate Questions', use_container_width=True):
             with st.spinner():
 
                 input_contents = []  # let the user input all the data
                 if (st.session_state.job_title != ""):
+                    #st.markdown('job title provided')
                     input_contents.append(str(st.session_state.job_title))
                 if (st.session_state.job_description != ""):
+                    #st.markdown('job description provided')
                     input_contents.append(str(st.session_state.job_description))
+                    #st.markdown(input_contents)
                 if (len(input_contents) == 0):  # remind user to provide data
                     st.write('Please fill in some contents for your message!')
 
 
                 if (len(input_contents) >= 1):  # initiate llm
                     if (len(interview_type) != 0) and (len(question_count) != 0):
+                        #st.markdown(f'Function Inputs: {interview_type}, {question_count}, {input_contents}, {provide_answers}, {st.session_state.resume_summary}')
                         interview_questions = generate_questions(interview_type, 
                                                                 question_count, 
                                                                 input_contents, 
                                                                 provide_answers,
                                                                 st.session_state.resume_summary)
+                                           
                 
                     
         if interview_questions != "":
             with st.expander("Interview Questions", expanded=True):
                 st.markdown(interview_questions)
 
-                # pdf_sections = [
-                #         ("Resume Summary",  st.session_state.resume_summary),
-                #         ("List of Questions", interview_questions)
-                #     ]
+                pdf_sections = [
+                        ("Resume Summary",  st.session_state.resume_summary),
+                        ("List of Questions", interview_questions)
+                    ]
                 
-                # filename = generate_filename('HireWise')
-                # create_pdf(filename, pdf_sections)
+                filename = generate_filename('HireWise')
+                create_pdf(filename, pdf_sections)
 
-                # with open(filename, 'rb') as download_file:
-                #     st.download_button('Download', data=download_file, file_name=filename)
+                with open(filename, 'rb') as download_file:
+                    st.download_button('Download', data=download_file, file_name=filename)
 
 
 if __name__ == '__main__': 
