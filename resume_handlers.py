@@ -4,8 +4,6 @@ from dotenv import load_dotenv
 import tempfile
 from langchain_community.document_loaders import PyPDFLoader
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 load_dotenv()
 

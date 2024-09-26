@@ -72,12 +72,12 @@ def format_text(text):
     text = re.sub(r'##(.*?)\n', lambda match: f"<font size=16><b>{match.group(1)}</b></font>\n", text)
     # Handle numbered lists (e.g., '1.', '2.', etc.)
     text = re.sub(r'(\n|^)(\d+\.)', r'<br/>\2', text)  # Add <br/> before any numbered list
-    # Add line break after each colon
-    text = re.sub(r'(:)', r'\1<br/>', text)  
+     # Bold numbered chunks ending with a colon (e.g., '1. Cloud Platforms:')
+    text = re.sub(r'(\d+\.\s[^:]+:)', r'<b>\1</b>', text)
     # Add line break after each colon
     text = re.sub(r'(:)', r'\1<br/>', text)  
     # Add line break before the word 'Explanation'
-    text = re.sub(r'(\bExplanation\b)', r'<br/><b>\1</b>', text) 
+    # text = re.sub(r'(\bExplanation\b)', r'<br/><b>\1</b>', text) 
     return text
 
 
@@ -181,7 +181,6 @@ def create_pdf(pdf_filename, sections, logo_path = 'img\logo.gif', tips_text = t
     """Create a PDF with the given sections."""
     doc = SimpleDocTemplate(pdf_filename, pagesize=A4)
     content = []
-
 
     for header_text, paragraph_text in sections:
         header_level = 1 if header_text.startswith("## ") else 2

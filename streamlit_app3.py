@@ -2,8 +2,8 @@
 # TODO: 2. Provide how many questions and answer pairs the user wants (maybe a dropdown or a scale) ✅ 12/09
 # TODO: 3. A dropdown fo the general/technical question ✅ 12/09
 # TODO: 4. Stream the response - I had problem with markdown ✅> I have added in progress button
-# TODO: 5. Change the color of the generate questions button
-# TODO: 6. Change the main fonts
+# TODO: 5. Change the color of the generate questions button ✅ 12/09
+# TODO: 6. Change the main fonts > seems like too much work
 # TODO: 7. Read the resume ✅ 16/9
 # TODO: 8. Summarize the resume and put it in the place holder ✅ 16/9
 # TODO: 9. Put the questions into a placeholder like a table, maybe separate each question ✅ - I think the answers are well presented
@@ -17,19 +17,21 @@
 # TODO: 17. Add line breaks in the pdf if possible ✅ 18/9
 # TODO: 18. Hide resume summary section in the pdf file if it is not provided > the current design requires a resume
 # TODO: 19. Add different steps for the task (stage 1, stage 2, ...) ✅ 19/9
-# TODO: 20. Give a similarity score based the job description and uploaded resume
-# TODO: 21. Add the user name or personal info at the top of the pdf with a different text color - maybe a highlight
+# TODO: 20. Give a similarity score based the job description and uploaded resume ✅ 25/9
+# TODO: 21. Add the user name or personal info at the top of the pdf with a different text color - maybe a highlight ✅ 25/9
 # TODO: 22. Add a progress bar ✅ 20/9, for sessions 0, 1
 # TODO: 23. Handle when the resume is not in proper format
 # TODO: 24. Add accept resume summary or regenerate button ✅ 20/9
 # TODO: 25. Move provide anwers checkbox in the stage 2 ✅ 23/9
-# TODO: 26. Add st.status to show the stages
-# TODO: 27. Add a back button so the user can go to the previous stage
+# TODO: 26. Add st.status to show the stages > already added progress expander
+# TODO: 27. Add a back button so the user can go to the previous stage ✅ 26/9
 # TODO: 28. Make the progress bar seem static when session is restarted ✅ 24/9
 # TODO: 29. Move all the pdf functions to a separate file for a cleaner code space  ✅ 25/9
 # TODO: 30. Add a helpful tip box in the final pdf ✅ 25/9
 # TODO: 31. Extract candidate's name from the uploaded resume ✅ 25/9
-
+# TODO: 31. Add the header of session 3 ✅ 26/9
+# TODO: 32. Change the color of sidebar ✅ 26/9
+# TODO: 33. Redefine the button names and descriptions ✅ 26/9
 
 import streamlit as st
 import texts
@@ -54,6 +56,10 @@ from streamlit_extras.stylable_container import stylable_container
 def set_state(i):
     st.session_state.stage = i
 
+def back_button():
+    st.session_state.stage -= 1
+
+
 
 def create_main_frame():
     
@@ -73,8 +79,30 @@ def create_main_frame():
             """,
             unsafe_allow_html=True,
         )
-     
-  
+    
+    # color of the sidebar
+    st.html(
+    """
+    <style>
+    [data-testid="stSidebarContent"] {
+        color: white;
+        background-color: #83c5be;
+    }
+    </style>
+    """
+    )
+
+    st.markdown("""
+    <style>
+        button {
+            font-size: 14px !important;
+            font-weight: bold !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
+
+
+
      
     if st.session_state.stage == 0:
         progress_bar.progress((st.session_state.stage+1)*15)
@@ -105,9 +133,13 @@ def create_main_frame():
             st.markdown(' ')
 
 
-        st.markdown("<p style='color:#0a1128; text-align: center; font-size:50px; font-family:'Pacifito', cursive;' > <b> AI-Powered features from the future. </b> </p>", unsafe_allow_html=True)
+        #st.markdown("<p style='color:#0a1128; text-align: center; font-size:50px; font-family:'Pacifito', cursive;' > <b> AI-Powered features from the future. </b> </p>", unsafe_allow_html=True)
         #st.markdown('# AI-Powered features from the future.')
-        st.markdown('\n')
+        st.markdown("<p style='color:#00072d; text-align: center; font-size:50px; font-family:'Pacifito', cursive;' > <b> Connecting Candidates to Their Dream Jobs </b> </p>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#00072d; text-align: center; font-size:20px; font-family:'Pacifito', cursive;' > <b> Find the perfect job match for your candidates with AI-powered interview preparation. </b> </p>", unsafe_allow_html=True)
+        #st.markdown('\n')
+        #st.header('Connecting candidates to their dream jobs')
+        #st.subheader("Find the perfect job match for your candidates with AI-powered interview preparation.")
 
         with st.sidebar:
             # candidate_name = st.text_input('Candidate\'s Name', key='candidate name')
@@ -116,7 +148,7 @@ def create_main_frame():
             job_title2 = st.text_input('Job Title', 'Data Scientist')
             st.session_state['job_title'] = job_title2
         
-            job_desc = st.text_area('Job Description' , texts.job_description , height = 380)
+            job_desc = st.text_area('Job Description' , texts.job_description , height = 340)
             st.session_state['job_description'] = job_desc
         
 
@@ -140,13 +172,21 @@ def create_main_frame():
             ):
                 st.button(f"Get Started", key="button", on_click=set_state, args=[1], use_container_width=True)
 
-            # st.button('Get Started', on_click=set_state, args=[1])
         with col023:
             st.markdown(' ') 
 
+        
 
     if st.session_state.stage == 1:
         progress_bar.progress((st.session_state.stage+1)*15)
+
+        # Create a layout with two columns for back button
+        cols = st.columns([1, 7])
+
+        # Display back button
+        with cols[0].container():
+                st.button("← Back", on_click=back_button, use_container_width=True)
+        
         # for i in range(35):
         #     # Update the progress bar with each iteration.
         #     progress_bar.progress(i + 1)
@@ -180,11 +220,13 @@ def create_main_frame():
             # uploaded_file = st.file_uploader("Upload Resume", type="pdf")
 
 
-        st.header('Step 1: Upload the Resume...')
+        st.header('Step 1: Upload Candidate Resume...')
 
-        st.markdown('Upload candidate\'s resume, regeneate the summary if you\'re not happy with it and then press sumbit.')
+        st.markdown('Provide the candidate\'s resume, and we\'ll summarize it for a quick review.')
 
         resume_summary = ""
+
+        st.info('To ensure the best results, please upload resumes in a standard format (PDF, DOCX) with clear sections like Work Experience, Skills, and Education. This helps our system generate an accurate summary and relevant interview questions.')
 
         col1, col2= st.columns([1, 1])
 
@@ -201,6 +243,7 @@ def create_main_frame():
 
         if uploaded_file:
             with st.expander('Resume Summary', expanded=True):
+                st.success('Your resume is successfully uploaded!')
                 with st.spinner():
                     full_resume = resume_handlers.read_resume(uploaded_file)
                     resume_summary = resume_handlers.summarise_resume(full_resume)
@@ -225,31 +268,50 @@ def create_main_frame():
         
         st.sidebar.write(" ")
 
-        st.header("Step 2 - Let's Review")
-        st.markdown("Review the information below and click 'Generate Querstions'")
+        # Create a layout with two columns for back button
+        cols = st.columns([1, 7])
 
-        col221, col222= st.columns([1, 1])
+        # Display back button
+        with cols[0].container():
+            st.button("← Back", on_click=back_button, use_container_width=True)
 
-        with col221:
-            st.button('Generate Questions', key='submit_button', on_click=set_state, args=[3], use_container_width=True)
-        with col222:
-            st.button('Submit Changes', key="back_button", on_click=set_state, args=[0], use_container_width=True)
+        st.header("Step 2: Let's Review Candidate Information")
+        st.markdown("Here’s what you’ve provided so far. Make sure everything is correct.")
 
+        # Initialize session state if not already done
+        if 'candidate_name' not in st.session_state:
+            st.session_state['candidate_name'] = ""
+        if 'job_title' not in st.session_state:
+            st.session_state['job_title'] = ""
+        if 'job_description' not in st.session_state:
+            st.session_state['job_description'] = ""
+
+
+
+        st.button('Proceed to Interview Preparation', key='proceed_button', on_click=set_state, args=[3], use_container_width=True)
+
+        # col221, col222= st.columns([1, 1])
+
+        # with col221:
+        #     st.button('Proceed to Interview Preparation', key='proceed_button', on_click=set_state, args=[3], use_container_width=True)
+        # with col222:
+        #     if st.button('Submit Changes', key="submit_changes", on_click=set_state, args=[3], use_container_width=True)
 
         st.subheader("General Information")
 
         col211, col212= st.columns([1, 1])
         with col211:
-            st.text_input('Candidate Name', value = st.session_state['candidate_name'])
+            candidate_name_text_input = st.text_input('Candidate Name', value = st.session_state['candidate_name'])
         with col212:
-            st.text_input('Job Title', value = st.session_state['job_title'])
-        st.text_area('Job Description', value = st.session_state['job_description'])
-
+            job_title_text_input = st.text_input('Job Title', value = st.session_state['job_title'])
+        job_description_text_area = st.text_area('Job Description', value = st.session_state['job_description'], height=150)
+            
+        
         # Draw a horizontal line
         st.divider()
 
         st.subheader("Resume")
-        st.text_area('Resume Summary', value = st.session_state['resume_summary'])
+        st.text_area('Resume Summary', value = st.session_state['resume_summary'], height=200)
         
 
     if st.session_state.stage == 3:
@@ -258,9 +320,20 @@ def create_main_frame():
 
         st.sidebar.write(" ")
 
+        # Create a layout with two columns for back button
+        cols = st.columns([1, 7])
+
+        # Display back button
+        with cols[0].container():
+            st.button("← Back", on_click=back_button, use_container_width=True)
+
+        st.header("Step 3 - Finalize it...")
+        st.markdown("Choose the number of questions and interview type. Get question-answer pairs and a similarity score between the job description and resume.")
+
         st.session_state.interview_questions = ''
         st.session_state.similarity_score = ''
 
+        st.markdown(f"{st.session_state['candidate_name']}")
 
         col311, col312 = st.columns([1, 1])
 
@@ -317,7 +390,7 @@ def create_main_frame():
                 PDF_maker.create_pdf(filename, pdf_sections, candidate_name=st.session_state['candidate_name'])
 
                 with open(filename, 'rb') as download_file:
-                    st.download_button('Download', data=download_file, file_name=filename, use_container_width=True)
+                    st.download_button('Download Full Report', data=download_file, file_name=filename, use_container_width=True)
 
 
 if __name__ == '__main__': 
