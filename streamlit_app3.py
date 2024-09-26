@@ -60,7 +60,6 @@ def back_button():
     st.session_state.stage -= 1
 
 
-
 def create_main_frame():
     
     if 'stage' not in st.session_state:
@@ -100,8 +99,6 @@ def create_main_frame():
         }
     </style>
     """, unsafe_allow_html=True)
-
-
 
      
     if st.session_state.stage == 0:
@@ -150,8 +147,10 @@ def create_main_frame():
         
             job_desc = st.text_area('Job Description' , texts.job_description , height = 340)
             st.session_state['job_description'] = job_desc
-        
 
+            st.markdown("[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/Miss-Alpha/CareerGuru)")
+
+            
         # to put the button in the middle
         col021, col022, col023 = st.columns([2, 1, 2])
         with col021:
@@ -176,7 +175,6 @@ def create_main_frame():
             st.markdown(' ') 
 
         
-
     if st.session_state.stage == 1:
         progress_bar.progress((st.session_state.stage+1)*15)
 
