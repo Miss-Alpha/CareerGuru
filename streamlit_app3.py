@@ -148,6 +148,9 @@ def create_main_frame():
             job_desc = st.text_area('Job Description' , texts.job_description , height = 340)
             st.session_state['job_description'] = job_desc
 
+            for _ in range(29):
+                st.markdown('\n')
+
             st.markdown("[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://github.com/Miss-Alpha/CareerGuru)")
 
             

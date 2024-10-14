@@ -4,11 +4,13 @@ from dotenv import load_dotenv
 import tempfile
 from langchain_community.document_loaders import PyPDFLoader
 import numpy as np
+import streamlit as st
 
 load_dotenv()
 
 # Connect to OpenAI 
-client = OpenAI()
+#client = OpenAI()
+client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 def read_resume(uploaded_cv):
     # Save the uploaded file as a temporary file
